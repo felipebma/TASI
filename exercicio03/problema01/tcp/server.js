@@ -16,7 +16,10 @@ const server = net.createServer((socket) => {
     data = unmarshaller.unmarshal(data);
     console.log("UNMARSHELLED_REQUEST:");
     console.log(data);
-    const result = marshaller.marshal(calculate(data));
+    const unmarshalled_result = calculate(data);
+    console.log("UNMARSHELLED_RESULT:");
+    console.log(unmarshalled_result);
+    const result = marshaller.marshal(unmarshalled_result);
     console.log("MARSHELLED_RESULT:");
     console.log(result);
     console.log("--------------------------------------");
@@ -41,13 +44,13 @@ const calculate = (data) => {
     case "DIV":
       return {
         opcode: "RESULT",
-        result: data.op1 / data.op2,
+        result: Math.floor(data.op1 / data.op2),
       };
 
     case "MULT":
       return {
         opcode: "RESULT",
-        result: data.op1 - data.op2,
+        result: data.op1 * data.op2,
       };
   }
 };

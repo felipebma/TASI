@@ -27,7 +27,7 @@ client.connect(4000, () => {
       const data = parseData(line);
       client.write(marshaller.marshal(data));
     } catch (error) {
-      console.log(`${error}`);
+      console.log(`${error}\n`);
     }
   });
 
