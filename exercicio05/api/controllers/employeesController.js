@@ -1,7 +1,6 @@
 const MOCK_DATA = require("../data/mock_data");
 const Employee = require("../entities/Employees");
 const uuid = require("uuid");
-const { get } = require("../routes/router");
 
 const BASE_URL = "localhost:8080";
 const DEPARTMENTS_URL = `${BASE_URL}/departments`;
