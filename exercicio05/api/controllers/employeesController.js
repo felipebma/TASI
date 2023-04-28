@@ -1,5 +1,5 @@
 const MOCK_DATA = require("../data/mock_data");
-const Employee = require("../entities/Employees");
+const Employee = require("../entities/Employee");
 const uuid = require("uuid");
 
 const BASE_URL = "localhost:8080";
