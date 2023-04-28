@@ -1,55 +1,56 @@
 const MOCK_DATA = require("../data/mock_data");
-const Employee = require("../entities/Employees");
+const Department = require("../entities/Department");
 const uuid = require("uuid");
 
 const BASE_URL = "localhost:8080";
 const DEPARTMENTS_URL = `${BASE_URL}/departments`;
 const EMPLOYEES_URL = `${BASE_URL}/employees`;
-const employeesDB = {};
-MOCK_DATA.employees.forEach((employee) => {
-  employeesDB[employee.id] = employee;
+const departmentsDB = {};
+MOCK_DATA.departments.forEach((department) => {
+  departmentsDB[department.id] = department;
 });
 
-const employeeLinks = (employee) => {
+const departmentLinks = (department) => {
   return [
     {
       rel: "self",
       method: "GET",
-      href: `${EMPLOYEES_URL}/${employee.id}`,
+      href: `${DEPARTMENTS_URL}/${department.id}`,
     },
     {
       rel: "edit",
       method: "PUT",
-      title: "Edit employee",
-      href: `${EMPLOYEES_URL}/${employee.id}`,
+      title: "Edit department",
+      href: `${DEPARTMENTS_URL}/${department.id}`,
     },
     {
       rel: "delete",
       method: "DELETE",
-      title: "Delete employee",
-      href: `${EMPLOYEES_URL}/${employee.id}`,
+      title: "Delete department",
+      href: `${DEPARTMENTS_URL}/${department.id}`,
     },
     {
-      rel: "department",
+      rel: "departments",
       method: "GET",
-      href: `${DEPARTMENTS_URL}/${employee.departmentId}`,
+      title: "Back to departments",
+      href: `${DEPARTMENTS_URL}`,
     },
   ];
 };
 
-const employeesListLinks = () => {
+const departmentsListLinks = () => {
   return [
     {
       rel: "self",
       method: "GET",
-      title: "Employees",
-      href: `${EMPLOYEES_URL}`,
+      title: "Departments",
+      href: `${DEPARTMENTS_URL}`,
     },
     {
       rel: "create",
       method: "POST",
-      title: "Create Employee",
-      href: `${EMPLOYEES_URL}`,
+      title: "Create Department",
+      href: `${DEPARTMENTS_URL}`,
     },
     { rel: "home", method: "GET", title: "back home", href: `${BASE_URL}` },
   ];
@@ -57,63 +58,71 @@ const employeesListLinks = () => {
 
 const controller = {
   getOne: (req, res) => {
-    const employeeId = req.params.employeeId;
-    if (employeeId in employeesDB) {
-      const employee = employeesDB[employeeId];
+    const departmentId = req.params.departmentId;
+    if (departmentId in departmentsDB) {
+      const department = departmentsDB[departmentId];
       res.status(200).json({
-        ...employee,
-        links: employeeLinks(employee),
+        ...department,
+        links: departmentLinks(department),
       });
     } else {
-      res.status(404).send("There is no stored Employee with the requested id");
+      res
+        .status(404)
+        .send("There is no stored Department with the requested id");
     }
   },
   listAll: (req, res) => {
     res.status(200).json({
-      employees: Object.values(employeesDB).map((employee) => {
+      departments: Object.values(departmentsDB).map((department) => {
         return {
-          ...employee,
-          links: employeeLinks(employee),
+          ...department,
+          links: departmentLinks(department),
         };
       }),
-      links: employeesListLinks(),
+      links: departmentsListLinks(),
     });
   },
 
-  addEmployee: (req, res) => {
-    if (req.body instanceof Employee) {
-      let employee = req.body;
-      employee.id = uuid.v4();
-      employeesDB[employee.id] = employee;
-      res.status(201).json({ ...employee, links: employeeLinks(employee) });
+  addDepartment: (req, res) => {
+    if (req.body instanceof Department) {
+      let department = req.body;
+      department.id = uuid.v4();
+      departmentsDB[department.id] = department;
+      res
+        .status(201)
+        .json({ ...department, links: departmentLinks(department) });
     } else {
-      res.status(400).send("Invalid employee format");
+      res.status(400).send("Invalid department format");
     }
   },
 
-  editEmployee: (req, res) => {
-    let employeeId = req.params.employeeId;
-    if (!(employeeId in employeesDB)) {
-      res.status(404).send("There is no stored Employee with the requested id");
+  editDepartment: (req, res) => {
+    let departmentId = req.params.departmentId;
+    if (!(departmentId in departmentsDB)) {
+      res
+        .status(404)
+        .send("There is no stored Department with the requested id");
       return;
     }
-    if (req.body instanceof Employee) {
-      let employee = req.body;
-      employee.id = employeeId;
-      employeesDB[employeeId] = employee;
-      res.json(employee);
+    if (req.body instanceof Department) {
+      let department = req.body;
+      department.id = departmentId;
+      departmentsDB[departmentId] = department;
+      res.json(department);
     } else {
-      res.status(400).send("Invalid employee format");
+      res.status(400).send("Invalid department format");
     }
   },
 
-  deleteEmployee: (req, res) => {
-    let employeeId = req.params.employeeId;
-    if (!(employeeId in employeesDB)) {
-      res.status(404).send("There is no stored Employee with the requested id");
+  deleteDepartment: (req, res) => {
+    let departmentId = req.params.departmentId;
+    if (!(departmentId in departmentsDB)) {
+      res
+        .status(404)
+        .send("There is no stored Department with the requested id");
       return;
     }
-    delete employeesDB[employeeId];
+    delete departmentsDB[departmentId];
     res.status(204).send();
   },
 };
