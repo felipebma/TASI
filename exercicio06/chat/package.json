@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "events": "^3.3.0",
+    "object-observer": "^6.0.0",
+    "ws": "^8.13.0"
+  }
+}
